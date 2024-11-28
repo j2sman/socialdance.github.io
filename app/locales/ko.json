@@ -1,0 +1,17 @@
+{
+  "app": {
+    "title": "SocialDance Info",
+    "description": "SocialDance 정보",
+    "copyright": "Copyright © {year} SocialDance Info"
+  },
+  "common": {
+    "qna": "문의하기"
+  },
+  "nav": {
+    "barmap": "라틴바 위치"
+  },
+  "bars": {
+    "title": "라틴바 위치",
+    "select": "라틴바 선택"
+  }
+}

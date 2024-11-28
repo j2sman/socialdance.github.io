@@ -1,0 +1,17 @@
+{
+  "app": {
+    "title": "SocialDance Info",
+    "description": "SocialDance Info",
+    "copyright": "Copyright © {year} SocialDance Info"
+  },
+  "common": {
+    "qna": "QnA"
+  },
+  "nav": {
+    "barmap": "Latin Bar Locations"
+  },
+  "bars": {
+    "title": "Latin Bar Locations",
+    "select": "Select Latin Bar"
+  }
+}
