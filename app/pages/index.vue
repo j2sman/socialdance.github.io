@@ -24,8 +24,10 @@ const mapContainer = ref(null);
 const showBarList = ref(false);
 
 // 컴포넌트 마운트 시 바 데이터 가져오기
-onBeforeMount(() => {
-  barStore.fetchBars();
+onBeforeMount(async () => {
+  await barStore.fetchBars();
+  // 지도 초기화
+  initMap();
 });
 
 // 지도 초기화 함수
@@ -130,11 +132,6 @@ const initMap = async () => {
     console.error("지도 데이터 로드 실패:", error);
   }
 };
-
-// 컴포넌트 마운트 시 지도 초기화
-onMounted(() => {
-  initMap();
-});
 
 // 화면 크기 변경 시 지도 다시 그리기
 onMounted(() => {

@@ -1,14 +1,11 @@
 <script setup>
 import { ClubInfoExtService } from "~/database/clubinfo";
-import { useClubStore, useClubOptions } from "~/stores/clubstore";
-const { clubOptions } = useClubOptions();
 
 const { t, locale, locales, setLocale, finalizePendingLocaleChange } =
   useI18n();
 const { copy } = useClipboard();
 const toast = useToast();
 const switchLocalePath = useSwitchLocalePath();
-const clubStore = useClubStore();
 
 const links = computed(() => [
   {
@@ -58,19 +55,6 @@ onBeforeMount(async () => {});
 const onBeforeEnter = async () => {
   await finalizePendingLocaleChange();
 };
-
-// 컴포넌트 마운트 시 클럽 데이터 가져오기
-onBeforeMount(() => {
-  clubStore.fetchClubs();
-});
-
-// 선택된 클럽 변경 핸들러
-const handleClubSelect = (clubId) => {
-  if (clubId) {
-    clubStore.setSelectedClub(clubId);
-    console.log("선택된 클럽:", clubId); // 디버깅용
-  }
-};
 </script>
 
 <template>
@@ -86,15 +70,6 @@ const handleClubSelect = (clubId) => {
 
       <template #right>
         <div class="flex items-center gap-2 sm:gap-4">
-          <!-- 클럽 선택 ComboBox 추가 -->
-          <!-- <USelectMenu
-            v-model="clubStore.selectedClubId"
-            :options="clubOptions"
-            :placeholder="t('clubs.select')"
-            class="w-48"
-            @update:model-value="handleClubSelect"
-          /> -->
-
           <NuxtLink
             v-for="curLocale in availableLocales"
             :key="curLocale.code"
