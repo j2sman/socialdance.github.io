@@ -38,6 +38,7 @@ export interface BarInfo {
   location: Location;
   created_at: string;
   updated_at: string;
+  display_order: number;
 }
 
 // 라틴바 전체 정보 타입
@@ -84,9 +85,10 @@ export class ClubInfoExtService {
 
   async getAllBarsWithTranslations(): Promise<BarInfoExtListResponse> {
     try {
-      const { data: barsData, error: barsError } = await this.supabase.from(
-        this.barTableName
-      ).select(`
+      const { data: barsData, error: barsError } = await this.supabase
+        .from(this.barTableName)
+        .select(
+          `
           *,
           translations:${this.barI18nTableName}!bar_id(
             id,
@@ -101,7 +103,9 @@ export class ClubInfoExtService {
             address_type,
             is_primary
           )
-        `);
+        `
+        )
+        .order("display_order", { ascending: true });
 
       if (barsError) throw barsError;
 
@@ -119,6 +123,7 @@ export class ClubInfoExtService {
         return {
           id: bar.id,
           location: bar.location,
+          display_order: bar.display_order,
           created_at: bar.created_at,
           updated_at: bar.updated_at,
           translations,
