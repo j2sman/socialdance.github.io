@@ -1,6 +1,9 @@
 <script setup>
-import { AddressType } from "~/database/clubinfo";
-import { LOCATION_NAME_MAPPING, MAP_ICONS } from "~/constants/commonvars";
+import {
+  LOCATION_NAME_MAPPING,
+  MAP_ICONS,
+  CHOSUNG_MAP,
+} from "~/constants/commonvars";
 import { getLocationKey } from "~/constants/commoncomputed";
 import { getTranslatedText } from "~/utils/media";
 
@@ -60,7 +63,19 @@ watch(
   }
 );
 
-// 검색어를 포함한 필터링된 바 목록
+// 초성 검색을 위한 함수
+const matchesChosung = (text, query) => {
+  for (const [chosung, pattern] of Object.entries(CHOSUNG_MAP)) {
+    query = query.replace(chosung, pattern.source);
+  }
+  try {
+    return new RegExp(query).test(text);
+  } catch {
+    return false;
+  }
+};
+
+// filteredBars computed 속성 수정
 const filteredBars = computed(() => {
   let bars = props.selectedRegion
     ? barStore.totalBars.filter((bar) => {
@@ -75,14 +90,23 @@ const filteredBars = computed(() => {
   // 검색어로 추가 필터링
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase();
-    bars = bars.filter(
-      (bar) =>
-        safeGetTranslatedText(bar, "name").toLowerCase().includes(query) ||
-        safeGetTranslatedText(bar, "description")
-          .toLowerCase()
-          .includes(query) ||
-        safeGetTranslatedText(bar, "address").toLowerCase().includes(query)
-    );
+    bars = bars.filter((bar) => {
+      const name = safeGetTranslatedText(bar, "name").toLowerCase();
+      const description = safeGetTranslatedText(
+        bar,
+        "description"
+      ).toLowerCase();
+      const address = safeGetTranslatedText(bar, "address").toLowerCase();
+
+      return (
+        name.includes(query) ||
+        description.includes(query) ||
+        address.includes(query) ||
+        matchesChosung(name, searchQuery.value) ||
+        matchesChosung(description, searchQuery.value) ||
+        matchesChosung(address, searchQuery.value)
+      );
+    });
   }
 
   return bars;
