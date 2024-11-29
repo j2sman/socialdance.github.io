@@ -40,15 +40,52 @@ const localizedSelectedRegion = computed(() => {
   );
 });
 
-// 필터링된 바 목록
+// 검색어를 위한 ref 추가
+const searchQuery = ref("");
+
+// 검색 입력창을 위한 ref 추가
+const searchInput = ref(null);
+
+// showBarList가 변경될 때 searchQuery 초기화 (false -> true 일 때만)
+watch(
+  () => props.showBarList,
+  (newValue, oldValue) => {
+    if (newValue && !oldValue) {
+      searchQuery.value = "";
+      // nextTick을 사용하여 DOM이 업데이트된 후 포커스
+      nextTick(() => {
+        searchInput.value?.focus();
+      });
+    }
+  }
+);
+
+// 검색어를 포함한 필터링된 바 목록
 const filteredBars = computed(() => {
-  if (!props.selectedRegion) return barStore.totalBars;
-  const locationKey = getLocationKey(props.selectedRegion);
-  return barStore.totalBars.filter((bar) => {
-    const normalizedBarLocation = String(bar.location).trim().toLowerCase();
-    const normalizedLocation = String(locationKey).trim().toLowerCase();
-    return normalizedBarLocation === normalizedLocation;
-  });
+  let bars = props.selectedRegion
+    ? barStore.totalBars.filter((bar) => {
+        const normalizedBarLocation = String(bar.location).trim().toLowerCase();
+        const normalizedLocation = String(getLocationKey(props.selectedRegion))
+          .trim()
+          .toLowerCase();
+        return normalizedBarLocation === normalizedLocation;
+      })
+    : barStore.totalBars;
+
+  // 검색어로 추가 필터링
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase();
+    bars = bars.filter(
+      (bar) =>
+        safeGetTranslatedText(bar, "name").toLowerCase().includes(query) ||
+        safeGetTranslatedText(bar, "description")
+          .toLowerCase()
+          .includes(query) ||
+        safeGetTranslatedText(bar, "address").toLowerCase().includes(query)
+    );
+  }
+
+  return bars;
 });
 </script>
 
@@ -60,15 +97,25 @@ const filteredBars = computed(() => {
     >
       <UCard>
         <template #header>
-          <div class="flex justify-between items-center">
-            <h2 class="text-2xl font-semibold">
-              {{ localizedSelectedRegion }}
-            </h2>
-            <UButton
-              icon="i-heroicons-x-mark"
-              color="gray"
-              variant="ghost"
-              @click="emit('update:showBarList', false)"
+          <div class="flex flex-col gap-4">
+            <div class="flex justify-between items-center">
+              <h2 class="text-2xl font-semibold">
+                {{ localizedSelectedRegion }}
+              </h2>
+              <UButton
+                icon="i-heroicons-x-mark"
+                color="gray"
+                variant="ghost"
+                @click="emit('update:showBarList', false)"
+              />
+            </div>
+            <!-- 검색 입력창 추가 -->
+            <UInput
+              ref="searchInput"
+              v-model="searchQuery"
+              :placeholder="t('bars.searchPlaceholder')"
+              icon="i-heroicons-magnifying-glass"
+              class="w-full"
             />
           </div>
         </template>
