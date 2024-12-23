@@ -24,10 +24,9 @@ export const useBarStore = defineStore("bar", {
       }
 
       this.totalBars = barsData;
-
-      // if (import.meta.dev) {
-      //   console.log(`this.totalBars:\n${JSON.stringify(this.totalBars)}`); // URL 데이터 로깅
-      // }
+      if (import.meta.dev) {
+        console.log(`this.totalBars:\n${JSON.stringify(this.totalBars)}`); // URL 데이터 로깅
+      }
     },
 
     setSelectedBar(barId: string) {

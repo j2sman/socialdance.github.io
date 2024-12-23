@@ -1,5 +1,4 @@
 <script setup>
-import { Location } from "~/database/clubinfo";
 import * as d3 from "d3";
 import {
   LOCATION_NAME_MAPPING,

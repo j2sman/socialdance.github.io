@@ -7,6 +7,19 @@ export enum SupportedLanguage {
 }
 
 // 지원 언어 타입
+export enum UrlType {
+  homepage = "Homepage",
+  youtube = "Youtube",
+  instagram = "Instagram",
+  facebook = "Facebook",
+  background = "Background",
+  naverband = "Naverband",
+  navercafe = "Navercafe",
+  daumcafe = "Daumcafe",
+  kakaotalk = "Kakaotalk",
+}
+
+// 지원 언어 타입
 export enum Location {
   seoul = "Seoul",
   gyeonggi = "Gyeonggi",
@@ -36,9 +49,9 @@ export enum AddressType {
 export interface BarInfo {
   id: string;
   location: Location;
+  display_order: number;
   created_at: string;
   updated_at: string;
-  display_order: number;
 }
 
 // 라틴바 전체 정보 타입
